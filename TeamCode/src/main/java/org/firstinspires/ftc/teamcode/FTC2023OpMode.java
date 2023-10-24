@@ -57,9 +57,9 @@ public class FTC2023OpMode extends LinearOpMode {
     // Declare OpMode members.
     private ElapsedTime runtime = new ElapsedTime();
     private DcMotor leftFrontDrive = null;
-    private DcMotor leftRearDrive = null;
+    private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
-    private DcMotor rightRearDrive = null;
+    private DcMotor rightBackDrive = null;
 
     @Override
     public void runOpMode() {
@@ -67,16 +67,16 @@ public class FTC2023OpMode extends LinearOpMode {
         telemetry.update();
 
         // Initialize all four hardware variables.
-        leftFrontDrive = hardwareMap.get(DcMotor.class, "leftFront_drive");
-        leftRearDrive = hardwareMap.get(DcMotor.class, "leftRear_drive");
-        rightFrontDrive = hardwareMap.get(DcMotor.class, "rightFront_drive");
-        rightRearDrive = hardwareMap.get(DcMotor.class, "rightRear_drive");
+        leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
+        leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
+        rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
+        rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
         // Assuming that to drive forward, the motors on the left need to be reversed.
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
-        rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
+        rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
 
         // Wait for the game to start (driver presses PLAY)
         waitForStart();
@@ -122,14 +122,14 @@ public class FTC2023OpMode extends LinearOpMode {
             // Use the Y value for forward and backward motion, and the X value for turning.
             drive = gamepad1.left_stick_y;
             turn = gamepad1.left_stick_x;
-            leftPower = Range.clip(drive + turn, -1.0, 1.0);
-            rightPower = Range.clip(drive - turn, -1.0, 1.0);
+            leftPower = Range.clip(drive - turn, -1.0, 1.0);
+            rightPower = Range.clip(drive + turn, -1.0, 1.0);
 
             // Send calculated power to all four wheels.
             leftFrontDrive.setPower(leftPower);
-            leftRearDrive.setPower(leftPower);
+            leftBackDrive.setPower(leftPower);
             rightFrontDrive.setPower(rightPower);
-            rightRearDrive.setPower(rightPower);
+            rightBackDrive.setPower(rightPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
