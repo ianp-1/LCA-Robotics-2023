@@ -111,11 +111,11 @@ public class FTC2023OpMode extends LinearOpMode {
             } else if (left_x > 0.0 && right_x == 0.0) {
                 // move north-east
             } else if (left_x < 0.0 && right_x == 0.0) {
-                
+                // move south-west
             } else if (left_x == 0.0 && right_x > 0.0) {
-                
+                // move north-west
             } else if (left_x == 0.0 && right_x < 0.0) {
-                
+                // move south-east
             }
 
 
