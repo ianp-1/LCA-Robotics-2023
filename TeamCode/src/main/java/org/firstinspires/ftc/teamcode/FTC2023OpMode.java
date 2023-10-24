@@ -32,6 +32,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.util.ElapsedTime;
 import com.qualcomm.robotcore.util.Range;
 
@@ -72,8 +73,8 @@ public class FTC2023OpMode extends LinearOpMode {
         rightRearDrive = hardwareMap.get(DcMotor.class, "rightRear_drive");
 
         // Assuming that to drive forward, the motors on the left need to be reversed.
-        leftFrontDrive.setDirection(DcMotor.Direction.REVERSE);
-        leftRearDrive.setDirection(DcMotor.Direction.REVERSE);
+        leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
+        leftRearDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightRearDrive.setDirection(DcMotor.Direction.FORWARD);
 
@@ -81,15 +82,46 @@ public class FTC2023OpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
+        double leftPower;
+        double rightPower;
+
+        // Use the Y value for forward and backward motion, and the X value for turning.
+        double drive,left_x,left_y,right_x,right_y;// = gamepad1.left_stick_y;
+        double turn;// = gamepad1.left_stick_x;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
-            double leftPower;
-            double rightPower;
+
+            left_y = gamepad1.left_stick_y;
+            left_x = gamepad1.left_stick_x;
+            right_y = gamepad1.right_stick_y;
+            right_x = gamepad1.right_stick_x;
+
+            if(left_y > 0.0 && right_y > 0.0){
+                //move forwards
+            } else if (left_y < 0.0 && right_y < 0.0) {
+                //move backwards
+            } else if (left_y > 0.0 && right_y < 0.0) {
+                //turn clockwise
+            } else if (left_y < 0.0 && right_y > 0.0) {
+                // turn counterclockwise
+            } else if (left_x > 0.0 && right_x > 0.0) {
+                // move to right
+            } else if (left_x < 0.0 && right_x < 0.0) {
+                // move to left
+            } else if (left_x > 0.0 && right_x == 0.0) {
+                // move north-east
+            } else if (left_x < 0.0 && right_x == 0.0) {
+                
+            } else if (left_x == 0.0 && right_x > 0.0) {
+                
+            } else if (left_x == 0.0 && right_x < 0.0) {
+                
+            }
+
 
             // Use the Y value for forward and backward motion, and the X value for turning.
-            double drive = -gamepad1.left_stick_y;
-            double turn = gamepad1.left_stick_x;
-
+            drive = gamepad1.left_stick_y;
+            turn = gamepad1.left_stick_x;
             leftPower = Range.clip(drive + turn, -1.0, 1.0);
             rightPower = Range.clip(drive - turn, -1.0, 1.0);
 
