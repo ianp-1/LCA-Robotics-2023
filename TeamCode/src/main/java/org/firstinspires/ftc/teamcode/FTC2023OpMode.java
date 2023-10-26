@@ -82,12 +82,12 @@ public class FTC2023OpMode extends LinearOpMode {
         waitForStart();
         runtime.reset();
 
-        double leftPower;
-        double rightPower;
+        double set1Power;
+        double set2Power;
 
         // Use the Y value for forward and backward motion, and the X value for turning.
-        double drive,left_x,left_y,right_x,right_y;// = gamepad1.left_stick_y;
-        double turn;// = gamepad1.left_stick_x;
+        double stick1x,left_x,left_y,right_x,right_y;// = gamepad1.left_stick_y;
+        double stick1y;// = gamepad1.left_stick_x;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -120,20 +120,30 @@ public class FTC2023OpMode extends LinearOpMode {
 
 
             // Use the Y value for forward and backward motion, and the X value for turning.
-            drive = gamepad1.left_stick_y;
-            turn = gamepad1.left_stick_x;
-            leftPower = Range.clip(drive - turn, -1.0, 1.0);
-            rightPower = Range.clip(drive + turn, -1.0, 1.0);
+
+            stick1x = gamepad1.left_stick_x;
+            stick1y = gamepad1.left_stick_y;
+
+            set1Power = (stick1x+stick1y)/2;
+            set2Power = (-stick1x+stick1y)/2;
+
+            leftFrontDrive.setPower(set2Power);
+            leftBackDrive.setPower(set1Power);
+            rightFrontDrive.setPower(-set1Power);
+            rightBackDrive.setPower(-set2Power);
+
+//            leftPower = Range.clip(drive - turn, -1.0, 1.0);
+//            rightPower = Range.clip(drive + turn, -1.0, 1.0);
 
             // Send calculated power to all four wheels.
-            leftFrontDrive.setPower(leftPower);
-            leftBackDrive.setPower(leftPower);
-            rightFrontDrive.setPower(rightPower);
-            rightBackDrive.setPower(rightPower);
+//            leftFrontDrive.setPower(leftPower);
+//            leftBackDrive.setPower(leftPower);
+//            rightFrontDrive.setPower(rightPower);
+//            rightBackDrive.setPower(rightPower);
 
             // Show the elapsed game time and wheel power.
             telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftPower, rightPower);
+            telemetry.addData("Motors", "left (%.2f), right (%.2f)", set1Power, set2Power);
             telemetry.update();
         }
     }
