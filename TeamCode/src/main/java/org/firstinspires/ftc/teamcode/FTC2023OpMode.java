@@ -88,6 +88,7 @@ public class FTC2023OpMode extends LinearOpMode {
         // Use the Y value for forward and backward motion, and the X value for turning.
         double stick1x,left_x,left_y,right_x,right_y;// = gamepad1.left_stick_y;
         double stick1y;// = gamepad1.left_stick_x;
+        boolean lbumper, rbumper;
         // run until the end of the match (driver presses STOP)
         while (opModeIsActive()) {
 
@@ -95,6 +96,9 @@ public class FTC2023OpMode extends LinearOpMode {
             left_x = gamepad1.left_stick_x;
             right_y = gamepad1.right_stick_y;
             right_x = gamepad1.right_stick_x;
+
+            lbumper = gamepad1.left_bumper;
+            rbumper = gamepad1.right_bumper;
 
             if(left_y > 0.0 && right_y > 0.0){
                 //move forwards
@@ -124,13 +128,30 @@ public class FTC2023OpMode extends LinearOpMode {
             stick1x = gamepad1.left_stick_x;
             stick1y = gamepad1.left_stick_y;
 
+            lbumper = gamepad1.left_bumper;
+            rbumper = gamepad1.right_bumper;
+
             set1Power = (stick1x+stick1y)/2;
             set2Power = (-stick1x+stick1y)/2;
 
-            leftFrontDrive.setPower(set2Power);
-            leftBackDrive.setPower(set1Power);
-            rightFrontDrive.setPower(-set1Power);
-            rightBackDrive.setPower(-set2Power);
+            if(rbumper){
+                leftFrontDrive.setPower(1);
+                leftBackDrive.setPower(1);
+                rightFrontDrive.setPower(-1);
+                rightBackDrive.setPower(-1);
+            } else if(lbumper){
+                leftFrontDrive.setPower(-1);
+                leftBackDrive.setPower(-1);
+                rightFrontDrive.setPower(1);
+                rightBackDrive.setPower(1);
+            } else{
+                leftFrontDrive.setPower(set2Power);
+                leftBackDrive.setPower(set1Power);
+                rightFrontDrive.setPower(-set1Power);
+                rightBackDrive.setPower(-set2Power);
+            }
+
+
 
 //            leftPower = Range.clip(drive - turn, -1.0, 1.0);
 //            rightPower = Range.clip(drive + turn, -1.0, 1.0);
