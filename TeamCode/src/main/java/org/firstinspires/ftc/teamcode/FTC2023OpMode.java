@@ -85,6 +85,8 @@ public class FTC2023OpMode extends LinearOpMode {
         double set1Power;
         double set2Power;
 
+        int appliedPower=5;
+
         // Use the Y value for forward and backward motion, and the X value for turning.
         double stick1x,left_x,left_y,right_x,right_y;// = gamepad1.left_stick_y;
         double stick1y;// = gamepad1.left_stick_x;
@@ -100,28 +102,6 @@ public class FTC2023OpMode extends LinearOpMode {
             lbumper = gamepad1.left_bumper;
             rbumper = gamepad1.right_bumper;
 
-            if(left_y > 0.0 && right_y > 0.0){
-                //move forwards
-            } else if (left_y < 0.0 && right_y < 0.0) {
-                //move backwards
-            } else if (left_y > 0.0 && right_y < 0.0) {
-                //turn clockwise
-            } else if (left_y < 0.0 && right_y > 0.0) {
-                // turn counterclockwise
-            } else if (left_x > 0.0 && right_x > 0.0) {
-                // move to right
-            } else if (left_x < 0.0 && right_x < 0.0) {
-                // move to left
-            } else if (left_x > 0.0 && right_x == 0.0) {
-                // move north-east
-            } else if (left_x < 0.0 && right_x == 0.0) {
-                // move south-west
-            } else if (left_x == 0.0 && right_x > 0.0) {
-                // move north-west
-            } else if (left_x == 0.0 && right_x < 0.0) {
-                // move south-east
-            }
-
 
             // Use the Y value for forward and backward motion, and the X value for turning.
 
@@ -135,21 +115,26 @@ public class FTC2023OpMode extends LinearOpMode {
             set2Power = (-stick1x+stick1y)/2;
 
             if(rbumper){
-                leftFrontDrive.setPower(1);
+                leftFrontDrive.setTargetPosition(appliedPower);
                 leftBackDrive.setPower(1);
-                rightFrontDrive.setPower(-1);
+                rightFrontDrive.setTargetPosition(-appliedPower);
                 rightBackDrive.setPower(-1);
             } else if(lbumper){
-                leftFrontDrive.setPower(-1);
+                leftFrontDrive.setTargetPosition(-appliedPower);
                 leftBackDrive.setPower(-1);
-                rightFrontDrive.setPower(1);
+                rightFrontDrive.setTargetPosition(appliedPower);
                 rightBackDrive.setPower(1);
             } else{
-                leftFrontDrive.setPower(set2Power);
+                leftFrontDrive.setTargetPosition((int)(set2Power*appliedPower));
                 leftBackDrive.setPower(set1Power);
-                rightFrontDrive.setPower(-set1Power);
+                rightFrontDrive.setTargetPosition(-(int)(set2Power*appliedPower));
                 rightBackDrive.setPower(-set2Power);
             }
+
+            leftFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+            rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
 
 
