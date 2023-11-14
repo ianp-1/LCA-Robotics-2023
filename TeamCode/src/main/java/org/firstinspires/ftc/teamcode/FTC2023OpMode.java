@@ -66,106 +66,53 @@ public class FTC2023OpMode extends LinearOpMode {
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        // Initialize all four hardware variables.
+        // Initialize motors.
+        initializeMotors();
+
+        // Wait for start
+        waitForStart();
+        runtime.reset();
+        // Main loop
+        while (opModeIsActive()) {
+            controlMotors();
+            updateTelemetry();
+        }
+    }
+    private void initializeMotors() {
         leftFrontDrive = hardwareMap.get(DcMotor.class, "left_front_drive");
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
 
-        // Assuming that to drive forward, the motors on the left need to be reversed.
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+    }
 
-        // Wait for the game to start (driver presses PLAY)
-        waitForStart();
-        runtime.reset();
+    private void controlMotors () {
+        double left_y = gamepad1.left_stick_y;
+        double left_x = gamepad1.left_stick_x;
+        double right_y = gamepad1.right_stick_y;
+        double right_x = gamepad1.right_stick_x;
 
-        double set1Power;
-        double set2Power;
+        double set1Power = calculatePower(left_x, left_y);
+        double set2Power = calculatePower(right_x, right_y);
 
-        // Use the Y value for forward and backward motion, and the X value for turning.
-        double stick1x,left_x,left_y,right_x,right_y;// = gamepad1.left_stick_y;
-        double stick1y;// = gamepad1.left_stick_x;
-        boolean lbumper, rbumper;
-        // run until the end of the match (driver presses STOP)
-        while (opModeIsActive()) {
+        leftFrontDrive.setPower(set2Power);
+        leftBackDrive.setPower(set1Power);
+        rightFrontDrive.setPower(-set1Power);
+        rightBackDrive.setPower(-set2Power);
+    }
 
-            left_y = gamepad1.left_stick_y;
-            left_x = gamepad1.left_stick_x;
-            right_y = gamepad1.right_stick_y;
-            right_x = gamepad1.right_stick_x;
+    private double calculatePower(double x, double y) {
+        return (x + y) / 2;
+    }
 
-            lbumper = gamepad1.left_bumper;
-            rbumper = gamepad1.right_bumper;
-
-            if(left_y > 0.0 && right_y > 0.0){
-                //move forwards
-            } else if (left_y < 0.0 && right_y < 0.0) {
-                //move backwards
-            } else if (left_y > 0.0 && right_y < 0.0) {
-                //turn clockwise
-            } else if (left_y < 0.0 && right_y > 0.0) {
-                // turn counterclockwise
-            } else if (left_x > 0.0 && right_x > 0.0) {
-                // move to right
-            } else if (left_x < 0.0 && right_x < 0.0) {
-                // move to left
-            } else if (left_x > 0.0 && right_x == 0.0) {
-                // move north-east
-            } else if (left_x < 0.0 && right_x == 0.0) {
-                // move south-west
-            } else if (left_x == 0.0 && right_x > 0.0) {
-                // move north-west
-            } else if (left_x == 0.0 && right_x < 0.0) {
-                // move south-east
-            }
-
-
-            // Use the Y value for forward and backward motion, and the X value for turning.
-
-            stick1x = gamepad1.left_stick_x;
-            stick1y = gamepad1.left_stick_y;
-
-            lbumper = gamepad1.left_bumper;
-            rbumper = gamepad1.right_bumper;
-
-            set1Power = (stick1x+stick1y)/2;
-            set2Power = (-stick1x+stick1y)/2;
-
-            if(rbumper){
-                leftFrontDrive.setPower(1);
-                leftBackDrive.setPower(1);
-                rightFrontDrive.setPower(-1);
-                rightBackDrive.setPower(-1);
-            } else if(lbumper){
-                leftFrontDrive.setPower(-1);
-                leftBackDrive.setPower(-1);
-                rightFrontDrive.setPower(1);
-                rightBackDrive.setPower(1);
-            } else{
-                leftFrontDrive.setPower(set2Power);
-                leftBackDrive.setPower(set1Power);
-                rightFrontDrive.setPower(-set1Power);
-                rightBackDrive.setPower(-set2Power);
-            }
-
-
-
-//            leftPower = Range.clip(drive - turn, -1.0, 1.0);
-//            rightPower = Range.clip(drive + turn, -1.0, 1.0);
-
-            // Send calculated power to all four wheels.
-//            leftFrontDrive.setPower(leftPower);
-//            leftBackDrive.setPower(leftPower);
-//            rightFrontDrive.setPower(rightPower);
-//            rightBackDrive.setPower(rightPower);
-
-            // Show the elapsed game time and wheel power.
-            telemetry.addData("Status", "Run Time: " + runtime.toString());
-            telemetry.addData("Motors", "left (%.2f), right (%.2f)", set1Power, set2Power);
-            telemetry.update();
-        }
+    private void updateTelemetry() {
+        telemetry.addData("Status", "Run Time: " + runtime.toString());
+        telemetry.addData("Motors", "left (%.2f), right (%.2f)", leftFrontDrive.getPower(), rightFrontDrive.getPower());
+        telemetry.update();
     }
 }
+
