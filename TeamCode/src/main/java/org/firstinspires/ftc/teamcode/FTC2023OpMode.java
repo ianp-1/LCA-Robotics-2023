@@ -60,7 +60,7 @@ public class FTC2023OpMode extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private static final int APPLIED_POWER = 5;
+    private static final int APPLIED_POWER = 1000;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -106,12 +106,12 @@ public class FTC2023OpMode extends LinearOpMode {
         telemetry.addData("Right Bumper", rBumper ? "Pressed" : "Not Pressed");
 
         double set1Power = calculatePower(leftX, leftY);
-        double set2Power = calculatePower(-rightX, rightY);
+        double set2Power = calculatePower(-leftX, leftY);
 
         if (rBumper) {
-            setBumperPower(APPLIED_POWER, 1, -APPLIED_POWER, -1);
+            setBumperPower(APPLIED_POWER, -APPLIED_POWER);
         } else if (lBumper) {
-            setBumperPower(-APPLIED_POWER, -1, APPLIED_POWER, 1);
+            setBumperPower(-APPLIED_POWER, APPLIED_POWER);
         } else {
             setRegularPower(set1Power, set2Power);
         }
@@ -130,18 +130,18 @@ public class FTC2023OpMode extends LinearOpMode {
         return (x + y) / 2;
     }
 
-    private void setBumperPower(int leftTarget, double leftPower, int rightTarget, double rightPower) {
+    private void setBumperPower(int leftTarget, int rightTarget) {
         leftFrontDrive.setTargetPosition(leftTarget);
-        leftBackDrive.setPower(leftPower);
+        leftBackDrive.setTargetPosition(leftTarget);
         rightFrontDrive.setTargetPosition(rightTarget);
-        rightBackDrive.setPower(rightPower);
+        rightBackDrive.setTargetPosition(rightTarget);
     }
 
     private void setRegularPower(double set1Power, double set2Power) {
-        leftFrontDrive.setTargetPosition((int) (set1Power * APPLIED_POWER));
-        leftBackDrive.setPower(set1Power);
-        rightFrontDrive.setTargetPosition(-(int) (set2Power * APPLIED_POWER));
-        rightBackDrive.setPower(-set2Power);
+        leftFrontDrive.setTargetPosition((int) (set2Power * APPLIED_POWER));
+        leftBackDrive.setTargetPosition((int) (set1Power * APPLIED_POWER));
+        rightFrontDrive.setTargetPosition((int) (set1Power * APPLIED_POWER));
+        rightBackDrive.setTargetPosition((int) (set2Power * APPLIED_POWER));
     }
 
     private void resetMotorEncoders() {
