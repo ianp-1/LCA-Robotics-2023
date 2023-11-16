@@ -5,21 +5,22 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 
 
 public class ArmProcessor {
-    private final DcMotor shoulderMotor;
-
-    public ArmProcessor(DcMotor shoulderMotor, DcMotor wristMotor) {
+    public ArmProcessor ( DcMotor shoulderMotor, DcMotor motor) {
+        this.wristMotor = motor;
         this.shoulderMotor = shoulderMotor;
     }
-
     public static boolean open;
+    private final DcMotor wristMotor;
+    private final DcMotor shoulderMotor;
     static {
         open = false;
     }
 
+
     public void ProcessGamepad(Gamepad manager) {
         if (manager.dpad_up) {
-            shoulderMotor.setPower(5.0);
-        }
+            shoulderMotor.setPower(950);
+        }else
         if (manager.a) {
             open = !open;
             if (open) {
