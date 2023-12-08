@@ -60,7 +60,9 @@ public class FTC2023OpMode extends LinearOpMode {
     private DcMotor leftBackDrive = null;
     private DcMotor rightFrontDrive = null;
     private DcMotor rightBackDrive = null;
-    private static final int APPLIED_POWER = 1000;
+    private DcMotor clawMotor = null;
+    private ArmProcessor clawDrive = null;
+    private static final int APPLIED_POWER = 1000000;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -68,14 +70,18 @@ public class FTC2023OpMode extends LinearOpMode {
 
         // Initialize motors.
         initializeMotors();
+        resetMotorEncoders();
 
         // Wait for start
         waitForStart();
         runtime.reset();
+        boolean active = opModeIsActive();
         // Main loop
-        while (opModeIsActive()) {
+        while (active) {
+            telemetry.addData("Active", active);
             processGamepadInput();
             updateTelemetry();
+            active = opModeIsActive();
         }
     }
     private void initializeMotors() {
@@ -83,11 +89,15 @@ public class FTC2023OpMode extends LinearOpMode {
         leftBackDrive = hardwareMap.get(DcMotor.class, "left_back_drive");
         rightFrontDrive = hardwareMap.get(DcMotor.class, "right_front_drive");
         rightBackDrive = hardwareMap.get(DcMotor.class, "right_back_drive");
+        clawMotor = hardwareMap.get(DcMotor.class, "claw_motor");
+
+        clawDrive = new ArmProcessor(clawMotor);
 
         leftFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         leftBackDrive.setDirection(DcMotor.Direction.FORWARD);
         rightFrontDrive.setDirection(DcMotor.Direction.FORWARD);
         rightBackDrive.setDirection(DcMotor.Direction.FORWARD);
+
     }
 
     private void processGamepadInput() {
@@ -96,8 +106,11 @@ public class FTC2023OpMode extends LinearOpMode {
         double rightY = gamepad1.right_stick_y;
         double rightX = gamepad1.right_stick_x;
 
-        telemetry.addData("Left Stick", "x: %.2f, y: %.2f", leftX, leftY);
-        telemetry.addData("Right Stick", "x: %.2f, y: %.2f", rightX, rightY);
+        clawDrive.ProcessGamepad(gamepad2);
+
+        telemetry.addData("After processor", "Initialized");
+        telemetry.addData("LeftStickMotion", "x: %.2f, y: %.2f", leftX, leftY);
+        telemetry.addData("RightStickMotion", "x: %.2f, y: %.2f", rightX, rightY);
 
         boolean lBumper = gamepad1.left_bumper;
         boolean rBumper = gamepad1.right_bumper;
@@ -107,7 +120,8 @@ public class FTC2023OpMode extends LinearOpMode {
 
         double set1Power = calculatePower(leftX, leftY);
         double set2Power = calculatePower(-leftX, leftY);
-
+        setAllMotors(set1Power, set2Power);
+        /*
         if (rBumper) {
             setBumperPower(APPLIED_POWER, -APPLIED_POWER);
         } else if (lBumper) {
@@ -115,11 +129,11 @@ public class FTC2023OpMode extends LinearOpMode {
         } else {
             setRegularPower(set1Power, set2Power);
         }
-
-        resetMotorEncoders();
+         */
     }
 
     private void setAllMotors(double leftPower, double rightPower) {
+        telemetry.addData("In setAllMotors", "In setAllMotors");
         leftFrontDrive.setPower(leftPower);
         leftBackDrive.setPower(leftPower);
         rightFrontDrive.setPower(rightPower);
@@ -149,6 +163,11 @@ public class FTC2023OpMode extends LinearOpMode {
         leftBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightFrontDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         rightBackDrive.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
+        leftFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        leftBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightFrontDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+        rightBackDrive.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     private void updateTelemetry() {

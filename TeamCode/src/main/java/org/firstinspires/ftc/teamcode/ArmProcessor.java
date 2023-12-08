@@ -1,23 +1,35 @@
 package org.firstinspires.ftc.teamcode;
 
+import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.telemetry;
+
 import com.qualcomm.robotcore.eventloop.opmode.OpModeManager;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
+
+import org.firstinspires.ftc.ftccommon.internal.manualcontrol.responses.ParentHub;
 
 
 public class ArmProcessor {
-    public static boolean open;
-    static {
-        open = false;
+    public static double power = 0.825;
+
+    private DcMotor arm = null;
+
+
+    public ArmProcessor(DcMotor clawMotor) {
+        arm = clawMotor;
     }
 
     public void ProcessGamepad(Gamepad manager) {
-        if (manager.a) {
-            open = !open;
-            if (open) {
-                //rotate clamps toward each other if they're already open
+        if (manager.left_bumper) {
+            arm.setPower(-power);
+        } else {
+            if (manager.right_bumper) {
+                arm.setPower(power);
             } else {
-                //rotate clamps away from each other if they're already closed
+                arm.setPower(0);
             }
         }
     }
 }
+
+//to transfer code, set config to "TeamCode" plug a usb from the computer into Control Hub (not Expansion Hub)
