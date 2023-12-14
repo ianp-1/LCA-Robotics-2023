@@ -9,6 +9,6 @@ public class TestOpMode extends LinearOpMode {
 
     @Override
     public void runOpMode() throws InterruptedException {
-        System.out.println("Hello");
+        System.out.println("you goofball");
     }
 }

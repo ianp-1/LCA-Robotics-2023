@@ -62,7 +62,10 @@ public class FTC2023OpMode extends LinearOpMode {
     private DcMotor rightBackDrive = null;
     private DcMotor clawMotor = null;
     private ArmProcessor clawDrive = null;
-    private static final int APPLIED_POWER = 1000000;
+
+
+    private int fl, bl, fr, br;
+    private static final int APPLIED_POWER = 1;
     @Override
     public void runOpMode() {
         telemetry.addData("Status", "Initialized");
@@ -120,17 +123,14 @@ public class FTC2023OpMode extends LinearOpMode {
 
         double set1Power = calculatePower(leftX, leftY);
         double set2Power = calculatePower(-leftX, leftY);
+
         setAllMotors(set1Power, set2Power);
-        /*
-        if (rBumper) {
-            setBumperPower(APPLIED_POWER, -APPLIED_POWER);
-        } else if (lBumper) {
-            setBumperPower(-APPLIED_POWER, APPLIED_POWER);
-        } else {
-            setRegularPower(set1Power, set2Power);
-        }
-         */
-    }
+
+        CalculateBumpers(lBumper, rBumper);
+        setRegularPower(set1Power, set2Power);
+
+
+    } //End of Input Controls
 
     private void setAllMotors(double leftPower, double rightPower) {
         telemetry.addData("In setAllMotors", "In setAllMotors");
@@ -140,15 +140,30 @@ public class FTC2023OpMode extends LinearOpMode {
         rightBackDrive.setPower(rightPower);
     }
 
-    private double calculatePower(double x, double y) {
-        return (x + y) / 2;
+    private void CalculateBumpers(boolean lBumper, boolean rBumper)
+    {
+        int l;
+        int r;
+
+        if(lBumper)
+            l=1;
+        else
+            l=0;
+
+        if(rBumper)
+            r=1;
+        else
+            r=0;
+
+        fl += APPLIED_POWER * (-l + r);
+        bl += APPLIED_POWER * (-l + r);
+        fr += APPLIED_POWER * (l - r);
+        bl += APPLIED_POWER * (l - r);
+
     }
 
-    private void setBumperPower(int leftTarget, int rightTarget) {
-        leftFrontDrive.setTargetPosition(leftTarget);
-        leftBackDrive.setTargetPosition(leftTarget);
-        rightFrontDrive.setTargetPosition(rightTarget);
-        rightBackDrive.setTargetPosition(rightTarget);
+    private double calculatePower(double x, double y) {
+        return (x + y) / 2;
     }
 
     private void setRegularPower(double set1Power, double set2Power) {
